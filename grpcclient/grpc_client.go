@@ -2,9 +2,11 @@ package grpcclient
 
 import (
 	"context"
-	"log"
+	"net/http"
 
+	"github.com/brkelkar/common_utils/logger"
 	"github.com/brkelkar/grpc_client/auth"
+	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
@@ -13,23 +15,20 @@ var (
 	err  error
 )
 
-func Init() {
+//AuthMiddleware is to authenticate user
+func AuthMiddleware(c *gin.Context) {
 
-	Conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	authClient := auth.NewAuthValidationServiceClient(Conn)
+
+	response, err := authClient.Validate(context.Background(), &auth.Request{AuthToken: "Hello From Client!", UserName: "Bala"})
 	if err != nil {
-		log.Fatalf("did not connect: %s", err)
+		logger.Error("Error when calling Validate: %s", err)
 	}
-	defer Conn.Close()
-}
 
-func AuthMiddleware() {
-
-	c := auth.NewAuthValidationServiceClient(Conn)
-
-	response, err := c.Validate(context.Background(), &auth.Request{AuthToken: "Hello From Client!", UserName: "Bala"})
-	if err != nil {
-		log.Fatalf("Error when calling Validate: %s", err)
+	if response.Valid == true {
+		c.Next()
+	} else {
+		c.AbortWithStatus(http.StatusForbidden)
 	}
-	log.Printf("Response from server: %v", response.Valid)
 
 }
