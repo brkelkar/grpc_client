@@ -2,7 +2,6 @@ package grpcclient
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/brkelkar/common_utils/logger"
 	"github.com/brkelkar/grpc_client/auth"
@@ -37,6 +36,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		return func(c *gin.Context) {
 			respondWithError(c, 401, "Invalid API token")
 			c.Next()
+		}
 	}
 
 }
