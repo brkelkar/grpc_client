@@ -19,7 +19,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 }
 
 //AuthMiddleware is to authenticate user
-func AuthMiddleware(c *gin.Context) gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 
 	authClient := auth.NewAuthValidationServiceClient(Conn)
 
@@ -32,11 +32,12 @@ func AuthMiddleware(c *gin.Context) gin.HandlerFunc {
 		return func(c *gin.Context) {
 			c.Next()
 		}
-	} else {
-		return func(c *gin.Context) {
-			respondWithError(c, 401, "Invalid API token")
-			c.Next()
-		}
+	}
+
+	return func(c *gin.Context) {
+		respondWithError(c, 401, "Invalid API token")
+		c.Next()
+
 	}
 
 }
