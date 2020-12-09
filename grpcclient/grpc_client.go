@@ -15,8 +15,12 @@ var (
 	err  error
 )
 
+func respondWithError(c *gin.Context, code int, message interface{}) {
+	c.AbortWithStatusJSON(code, gin.H{"error": message})
+}
+
 //AuthMiddleware is to authenticate user
-func AuthMiddleware(c *gin.Context) {
+func AuthMiddleware() gin.HandlerFunc {
 
 	authClient := auth.NewAuthValidationServiceClient(Conn)
 
@@ -26,9 +30,13 @@ func AuthMiddleware(c *gin.Context) {
 	}
 
 	if response.Valid == true {
-		c.Next()
+		return func(c *gin.Context) {
+			c.Next()
+		}
 	} else {
-		c.AbortWithStatus(http.StatusForbidden)
+		return func(c *gin.Context) {
+			respondWithError(c, 401, "Invalid API token")
+			c.Next()
 	}
 
 }
