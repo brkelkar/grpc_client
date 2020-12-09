@@ -19,7 +19,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 }
 
 //AuthMiddleware is to authenticate user
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(c *gin.Context) gin.HandlerFunc {
 
 	authClient := auth.NewAuthValidationServiceClient(Conn)
 
