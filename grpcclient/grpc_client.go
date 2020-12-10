@@ -32,22 +32,21 @@ func GetConnectionID() *grpc.ClientConn {
 func AuthMiddleware() gin.HandlerFunc {
 	logger.Info("In AuthMiddleware")
 	authClient := auth.NewAuthValidationServiceClient(Conn)
+	return func(c *gin.Context) {
 
-	response, err := authClient.Validate(context.Background(), &auth.Request{AuthToken: "Hello From Client!", UserName: "Bala"})
-	if err != nil {
-		logger.Error("Error when calling Validate: %s", err)
-	}
+		response, err := authClient.Validate(context.Background(), &auth.Request{AuthToken: "Hello From Client!", UserName: "Bala"})
+		if err != nil {
+			logger.Error("Error when calling Validate: %s", err)
+		}
 
-	if response.Valid == true {
-		return func(c *gin.Context) {
+		if response.Valid == true {
 			c.Next()
+
+		} else {
+
+			respondWithError(c, 401, "Invalid API token")
+			c.Next()
+
 		}
 	}
-
-	return func(c *gin.Context) {
-		respondWithError(c, 401, "Invalid API token")
-		c.Next()
-
-	}
-
 }
