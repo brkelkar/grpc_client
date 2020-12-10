@@ -21,6 +21,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 
 func GetConnectionID() *grpc.ClientConn {
 	Conn, err = grpc.Dial(":9000", grpc.WithInsecure())
+	logger.Info("In connect")
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
 	}
@@ -28,8 +29,8 @@ func GetConnectionID() *grpc.ClientConn {
 }
 
 //AuthMiddleware is to authenticate user
-func AuthMiddleware(Conn *grpc.ClientConn) gin.HandlerFunc {
-
+func AuthMiddleware() gin.HandlerFunc {
+	logger.Info("In AuthMiddleware")
 	authClient := auth.NewAuthValidationServiceClient(Conn)
 
 	response, err := authClient.Validate(context.Background(), &auth.Request{AuthToken: "Hello From Client!", UserName: "Bala"})
