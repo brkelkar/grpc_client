@@ -28,7 +28,7 @@ func getConnectionID() *grpc.ClientConn {
 }
 
 //AuthMiddleware is to authenticate user
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(Conn *grpc.ClientConn) gin.HandlerFunc {
 
 	authClient := auth.NewAuthValidationServiceClient(Conn)
 
