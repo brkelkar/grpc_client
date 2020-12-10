@@ -19,7 +19,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 	c.AbortWithStatusJSON(code, gin.H{"error": message})
 }
 
-func getConnectionID() *grpc.ClientConn {
+func GetConnectionID() *grpc.ClientConn {
 	Conn, err = grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
