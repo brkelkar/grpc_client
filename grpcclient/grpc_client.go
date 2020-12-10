@@ -2,6 +2,7 @@ package grpcclient
 
 import (
 	"context"
+	"log"
 
 	"github.com/brkelkar/common_utils/logger"
 	"github.com/brkelkar/grpc_client/auth"
@@ -16,6 +17,14 @@ var (
 
 func respondWithError(c *gin.Context, code int, message interface{}) {
 	c.AbortWithStatusJSON(code, gin.H{"error": message})
+}
+
+func getConnectionID() *grpc.ClientConn {
+	Conn, err = grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %s", err)
+	}
+	return Conn
 }
 
 //AuthMiddleware is to authenticate user
